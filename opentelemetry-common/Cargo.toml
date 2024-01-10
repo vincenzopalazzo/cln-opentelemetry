@@ -1,0 +1,12 @@
+[package]
+name = "opentelemetry-common"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = { version = "0.4", features = ["std"] }
+opentelemetry = { version = "0.21.0", features = ["logs", "trace"] }
+opentelemetry-appender-log = "0.2.0"
+opentelemetry_sdk = { version = "0.21.2", features = [ "logs_level_enabled", "rt-tokio" ] }
+opentelemetry-prometheus = { version = "0.14.1" }
+anyhow = "1.0.79"

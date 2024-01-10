@@ -1,0 +1,9 @@
+[workspace]
+members = [
+        "opentelemetry-common",
+        "opentelemetry-plugin",
+]
+resolver = "2"
+
+[profile.release]
+opt-level = 3

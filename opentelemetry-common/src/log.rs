@@ -1,11 +1,13 @@
 //! Logging module.
 use std::str::FromStr;
+use std::sync::Arc;
 
 use opentelemetry::KeyValue;
 use opentelemetry_appender_log::OpenTelemetryLogBridge;
 use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::logs;
 use opentelemetry_sdk::resource;
+use opentelemetry_sdk::runtime;
 
 use crate::Opentelemetry;
 
@@ -29,9 +31,10 @@ pub fn init(
                 .http()
                 .with_endpoint(exporter_endpoint),
         )
-        .install_simple()?;
-    manager.logger = Some(logger);
+        .install_batch(runtime::Tokio)?;
+    manager.logger = Some(Arc::new(logger));
 
+    // the install method set a global provider, that we can use now
     let logger_provider = opentelemetry::global::logger_provider();
     let otel_log_appender = OpenTelemetryLogBridge::new(&logger_provider);
     log::set_boxed_logger(Box::new(otel_log_appender)).map_err(|err| anyhow::anyhow!("{err}"))?;

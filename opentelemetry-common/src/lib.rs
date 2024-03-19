@@ -1,11 +1,14 @@
 pub mod log;
 pub use anyhow;
 
+use std::sync::Arc;
+
 use opentelemetry::global;
 use opentelemetry_sdk::logs as sdklogs;
 
+#[derive(Debug, Clone)]
 pub struct Opentelemetry {
-    pub(crate) logger: Option<sdklogs::Logger>,
+    pub(crate) logger: Option<Arc<sdklogs::Logger>>,
 }
 
 impl Default for Opentelemetry {

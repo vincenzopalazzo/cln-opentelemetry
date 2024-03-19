@@ -19,8 +19,8 @@
           version = "master-log-notification";
           src = pkgs.fetchgit {
             url = "https://github.com/vincenzopalazzo/lightning";
-            rev = "4fc9e71929f1a982c2b6a6059a2cd15989195da9";
-            sha256 = "sha256-Ejpqbw002MCZ4kPmG/keoco6xdjCH/I3ICI5OA3HXEA=";
+            rev = "bfbf4da19db71ef8b506db547abf9abaa20b03c0";
+            sha256 = "sha256-kVCd6rXNfPb8msM7PUC4g8lPpT15aHjFngXD8SNbWxE=";
             fetchSubmodules = true;
           };
           configureFlags = [ "--disable-rust" "--disable-valgrind" ];

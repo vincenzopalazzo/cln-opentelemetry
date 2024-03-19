@@ -12,11 +12,13 @@ use clightningrpc_plugin_macros::{notification, plugin};
 use opentelemetry_common::Opentelemetry;
 
 #[derive(Clone, Debug)]
-pub(crate) struct State;
+pub(crate) struct State {
+    manager: Option<Opentelemetry>,
+}
 
 impl State {
     pub fn new() -> Self {
-        State
+        Self { manager: None }
     }
 }
 
@@ -56,17 +58,17 @@ pub fn build_plugin() -> anyhow::Result<Plugin<State>> {
             .unwrap_or("info".to_owned());
 
         // Run the Tokio runtime
-        crate::async_run!(async {
-            let mut resp = Opentelemetry::new();
-            let resp = resp.init_log("cln-plugin-test", &log_level, &log_url);
-            if let Err(err) = resp {
-                return json::json!({
-                    "disable": format!("{err}"),
-                });
-            }
-            log::info!(target: "test", "opentelemetry plugin starting ....");
-            json::json!({})
-        })
+        let mut manager = Opentelemetry::new();
+        let resp = manager.init_log("cln-plugin-test", &log_level, &log_url);
+        if let Err(err) = resp {
+            return json::json!({
+                "disable": format!("{err}"),
+            });
+        }
+
+        plugin.state.manager = Some(manager);
+        log::info!(target: "test", "opentelemetry plugin starting ....");
+        json::json!({})
     });
     Ok(plugin)
 }

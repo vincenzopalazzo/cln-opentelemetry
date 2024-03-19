@@ -24,14 +24,16 @@ macro_rules! async_run {
     }};
 }
 
-fn main() -> anyhow::Result<()> {
+// the async main is not required by our application
+// but the opentelemetry app is requiring to be
+// in an async context, so we use this
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let url = args.url;
 
-    let _manager = crate::async_run!(async {
-        let mut manager = Opentelemetry::new();
-        manager.init_log("example", &args.level, &url)
-    })?;
+    let mut manager = Opentelemetry::new();
+    manager.init_log("example", &args.level, &url)?;
 
     match args.level.as_str() {
         "info" => log::info!("{}", args.message),

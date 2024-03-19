@@ -25,21 +25,21 @@ pub fn build_plugin() -> anyhow::Result<Plugin<State>> {
         state: State::new(),
         dynamic: true,
         notification: [
-            on_log,
+           on_log,
         ],
         methods: [],
         hooks: [],
     };
     plugin.add_opt(
         "collect-log-url",
-        "str",
+        "string",
         None,
         "Specify the log URL of the remote log collector",
         false,
     );
     plugin.add_opt(
         "collect-log-level",
-        "str",
+        "string",
         None,
         "Specify the log level that we would like to track down",
         false,
@@ -54,13 +54,18 @@ pub fn build_plugin() -> anyhow::Result<Plugin<State>> {
         let log_level = plugin
             .get_opt::<String>("collect-log-level")
             .unwrap_or("info".to_owned());
-        let resp = Opentelemetry::new("test", &log_url)
-            .and_then(|val| val.init_log(&log_level))
-            .ok()
-            .map(|_| json::json!({ "disable": "Disabling due a open telemetry init error" }));
-        // SAFETY: this is always some, is there is not error, is
-        // Some(()) otherwise is Some({ disable: ... })
-        resp.unwrap()
+
+        // Run the Tokio runtime
+        crate::async_run!(async {
+            let resp =
+                Opentelemetry::new("test", &log_url).and_then(|val| val.init_log(&log_level));
+            if let Err(err) = resp {
+                return json::json!({
+                    "disable": format!("{err}"),
+                });
+            }
+            json::json!({})
+        })
     });
     Ok(plugin)
 }
@@ -74,16 +79,9 @@ struct OnLogRequest {
 }
 
 #[notification(on = "log")]
-fn on_log(_: &mut Plugin<State>, request: &Value) {
-    log::debug!("receiving `log` notification with body `{request}`");
+fn on_log(plugin: &mut Plugin<State>, request: &Value) {
     let inner_request = request;
-    let request = json::from_value::<OnLogRequest>(request.clone());
-    if let Err(err) = request {
-        log::error!("error while decoding the notification request: `{err}`");
-        return;
-    }
-    // SAFETY: this is safe because we check before
-    let request = request.unwrap();
+    let request = json::from_value::<OnLogRequest>(request.clone()).expect("unable to parse json");
     let logstr = format!("{} {}", request.source, request.log);
     match request.level.as_str() {
         "debug" => log::debug!("{logstr}"),
@@ -91,7 +89,6 @@ fn on_log(_: &mut Plugin<State>, request: &Value) {
         "warn" => log::info!("logstr"),
         "error" => log::error!("{logstr}"),
         _ => {
-            log::error!("level not supported `{}`", request.level);
             panic!("level not supported `{}`", request.level);
         }
     }

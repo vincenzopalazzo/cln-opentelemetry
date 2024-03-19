@@ -1,37 +1,37 @@
 pub mod log;
 pub use anyhow;
 
-use opentelemetry::KeyValue;
-use opentelemetry_otlp::WithExportConfig;
-use opentelemetry_sdk::logs;
-use opentelemetry_sdk::runtime;
-use opentelemetry_sdk::Resource;
+use opentelemetry::global;
+use opentelemetry_sdk::logs as sdklogs;
 
 pub struct Opentelemetry {
-    _logger: logs::Logger,
+    pub(crate) logger: Option<sdklogs::Logger>,
+}
+
+impl Default for Opentelemetry {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Opentelemetry {
-    pub fn new(tag: &str, exporter_endpoint: &str) -> anyhow::Result<Self> {
-        let logger = opentelemetry_otlp::new_pipeline()
-            .logging()
-            .with_log_config(logs::Config::default().with_resource(Resource::new(vec![
-                KeyValue::new(
-                    opentelemetry_semantic_conventions::resource::SERVICE_NAME,
-                    tag.to_owned(),
-                ),
-            ])))
-            .with_exporter(
-                opentelemetry_otlp::new_exporter()
-                    .tonic()
-                    .with_endpoint(exporter_endpoint),
-            )
-            .install_batch(runtime::Tokio)?;
-        Ok(Self { _logger: logger })
+    pub fn new() -> Self {
+        Opentelemetry { logger: None }
     }
 
-    pub fn init_log(&self, level: &str) -> anyhow::Result<()> {
-        log::init(level)?;
+    pub fn init_log(
+        &mut self,
+        tag: &str,
+        level: &str,
+        exporter_endpoint: &str,
+    ) -> anyhow::Result<()> {
+        log::init(self, tag.to_owned(), level, exporter_endpoint)?;
         Ok(())
+    }
+}
+
+impl Drop for Opentelemetry {
+    fn drop(&mut self) {
+        global::shutdown_logger_provider();
     }
 }

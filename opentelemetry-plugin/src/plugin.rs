@@ -57,13 +57,14 @@ pub fn build_plugin() -> anyhow::Result<Plugin<State>> {
 
         // Run the Tokio runtime
         crate::async_run!(async {
-            let resp =
-                Opentelemetry::new("test", &log_url).and_then(|val| val.init_log(&log_level));
+            let mut resp = Opentelemetry::new();
+            let resp = resp.init_log("cln-plugin-test", &log_level, &log_url);
             if let Err(err) = resp {
                 return json::json!({
                     "disable": format!("{err}"),
                 });
             }
+            log::info!(target: "test", "opentelemetry plugin starting ....");
             json::json!({})
         })
     });
@@ -84,10 +85,10 @@ fn on_log(plugin: &mut Plugin<State>, request: &Value) {
     let request = json::from_value::<OnLogRequest>(request.clone()).expect("unable to parse json");
     let logstr = format!("{} {}", request.source, request.log);
     match request.level.as_str() {
-        "debug" => log::debug!("{logstr}"),
-        "info" => log::info!("{logstr}"),
-        "warn" => log::info!("logstr"),
-        "error" => log::error!("{logstr}"),
+        "debug" => log::debug!(target: "test", "{logstr}"),
+        "info" => log::info!(target: "test", "{logstr}"),
+        "warn" => log::info!(target: "test", "logstr"),
+        "error" => log::error!(target: "test", "{logstr}"),
         _ => {
             panic!("level not supported `{}`", request.level);
         }

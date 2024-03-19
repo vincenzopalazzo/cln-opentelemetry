@@ -246,7 +246,7 @@ dependencies = [
 [[package]]
 name = "clightningrpc-common"
 version = "0.3.0-beta.4"
-source = "git+https://github.com/laanwj/cln4rust.git#1097ef9dd0e36910d4975937e6fa37cc1388ba16"
+source = "git+https://github.com/laanwj/cln4rust.git#56b385fc45af9047b78b9c817e658d2b4605ce63"
 dependencies = [
  "serde",
  "serde_json",
@@ -266,7 +266,7 @@ dependencies = [
 [[package]]
 name = "clightningrpc-plugin"
 version = "0.3.0-beta.8"
-source = "git+https://github.com/laanwj/cln4rust.git#1097ef9dd0e36910d4975937e6fa37cc1388ba16"
+source = "git+https://github.com/laanwj/cln4rust.git#56b385fc45af9047b78b9c817e658d2b4605ce63"
 dependencies = [
  "clightningrpc-common 0.3.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde",
@@ -276,7 +276,7 @@ dependencies = [
 [[package]]
 name = "clightningrpc-plugin-macros"
 version = "0.3.0-beta.4"
-source = "git+https://github.com/laanwj/cln4rust.git#1097ef9dd0e36910d4975937e6fa37cc1388ba16"
+source = "git+https://github.com/laanwj/cln4rust.git#56b385fc45af9047b78b9c817e658d2b4605ce63"
 dependencies = [
  "clightningrpc-plugin 0.3.0-beta.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "convert_case",
@@ -1085,9 +1085,9 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 
 [[package]]
 name = "reqwest"
-version = "0.11.26"
+version = "0.11.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78bf93c4af7a8bb7d879d51cebe797356ff10ae8516ace542b5182d9dcac10b2"
+checksum = "dd67538700a17451e7cba03ac727fb961abb7607553461627b97de0b89cf4a62"
 dependencies = [
  "base64",
  "bytes",

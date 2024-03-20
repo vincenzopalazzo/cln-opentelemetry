@@ -46,10 +46,18 @@ pub fn build_plugin() -> anyhow::Result<Plugin<State>> {
         "Specify the log level that we would like to track down",
         false,
     );
+    plugin.add_opt(
+        "collect-tag",
+        "string",
+        None,
+        "Specify the log level that we would like to track down",
+        false,
+    );
+
     plugin.on_init(|plugin| {
         let Some(log_url) = plugin.get_opt::<String>("collect-log-url") else {
             return json::json!({
-                "disable": "`log-url` option not specified",
+                "disable": "`collect-log-url` option not specified",
             });
         };
 
@@ -57,9 +65,16 @@ pub fn build_plugin() -> anyhow::Result<Plugin<State>> {
             .get_opt::<String>("collect-log-level")
             .unwrap_or("info".to_owned());
 
+        // FIXME: if it is none set it to the alias, cln should provide always one.
+        let Some(log_prefix) = plugin.get_opt::<String>("collect-tag") else {
+            return json::json!({
+                "disable": "`collect-tag` is not specified, please provide one",
+            });
+        };
+
         // Run the Tokio runtime
         let mut manager = Opentelemetry::new();
-        let resp = manager.init_log("cln-plugin-test", &log_level, &log_url);
+        let resp = manager.init_log(&log_prefix, &log_level, &log_url);
         if let Err(err) = resp {
             return json::json!({
                 "disable": format!("{err}"),
@@ -87,10 +102,10 @@ fn on_log(plugin: &mut Plugin<State>, request: &Value) {
     let request = json::from_value::<OnLogRequest>(request.clone()).expect("unable to parse json");
     let logstr = format!("{} {}", request.source, request.log);
     match request.level.as_str() {
-        "debug" => log::debug!(target: "test", "{logstr}"),
-        "info" => log::info!(target: "test", "{logstr}"),
-        "unusual" => log::info!(target: "test", "logstr"),
-        "broken" => log::error!(target: "test", "{logstr}"),
+        "debug" => log::debug!("{logstr}"),
+        "info" => log::info!("{logstr}"),
+        "unusual" => log::warn!("{logstr}"),
+        "broken" => log::error!("{logstr}"),
         _ => {
             panic!("level not supported `{}`", request.level);
         }

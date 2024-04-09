@@ -4,6 +4,7 @@ plugin:
   version: 0.0.1
   lang: rust
   install: |
-    which nix-build >/dev/null || sh <(curl -L https://nixos.org/nix/install) --no-daemon
-    nix develop --command bash -c 'make'
-  main: target/debug/opentelemetry-plugin
+    make
+    cp target/debug/opentelemetry-plugin .
+    make clean
+  main: opentelemetry-plugin

@@ -5,6 +5,4 @@ plugin:
   lang: rust
   install: |
     make
-    cp target/debug/opentelemetry-plugin .
-    make clean
-  main: opentelemetry-plugin
+  main: target/debug/opentelemetry-plugin

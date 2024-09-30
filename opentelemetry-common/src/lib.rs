@@ -8,7 +8,7 @@ use opentelemetry_sdk::logs as sdklogs;
 
 #[derive(Debug, Clone)]
 pub struct Opentelemetry {
-    pub(crate) logger: Option<Arc<sdklogs::Logger>>,
+    pub(crate) logger: Option<Arc<sdklogs::LoggerProvider>>,
 }
 
 impl Default for Opentelemetry {
@@ -35,6 +35,9 @@ impl Opentelemetry {
 
 impl Drop for Opentelemetry {
     fn drop(&mut self) {
-        global::shutdown_logger_provider();
+        let Some(Err(err)) = self.logger.as_ref().map(|log| log.shutdown()) else {
+            return;
+        };
+        panic!("Failed to shutdown logger: {:?}", err);
     }
 }

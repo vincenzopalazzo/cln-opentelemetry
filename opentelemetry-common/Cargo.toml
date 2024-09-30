@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-opentelemetry = { version = "0.21.0", features = ["logs"] }
-opentelemetry-appender-log = { version = "0.2.0", default-features = false }
-opentelemetry_sdk = { version = "0.21.2", features = [ "logs", "rt-tokio" ] }
-opentelemetry-otlp = { version = "0.14.0", features = [ "http-proto", "reqwest-client", "reqwest-rustls", "logs" ] }
-opentelemetry-semantic-conventions = { version = "0.13.0"  }
+opentelemetry = { version = "0.25", features = ["logs"] }
+opentelemetry-appender-log = { version = "0.25", default-features = false }
+opentelemetry_sdk = { version = "0.25", features = [ "logs", "rt-tokio" ] }
+opentelemetry-otlp = { version = "0.25", features = [ "http-proto", "reqwest-client", "reqwest-rustls", "logs" ] }
+opentelemetry-semantic-conventions = { version = "0.25.0"  }
 anyhow = "^1"
 log = { version = "0.4", features = ["std"] }
 

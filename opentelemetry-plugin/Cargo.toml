@@ -11,5 +11,5 @@ log = "0.4.20"
 anyhow = "1.0.79"
 serde = "1.0.159"
 serde_json = "1.0.95"
-opentelemetry-common = { path = "../opentelemetry-common" }
- tokio = { version = "^1.29.1", features = ["rt-multi-thread", "parking_lot"] }
+tokio = { version = "^1.29.1", features = ["rt-multi-thread", "parking_lot"] }
+opentelemetry-log = "0.1"

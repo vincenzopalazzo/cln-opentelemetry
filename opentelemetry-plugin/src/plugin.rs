@@ -9,7 +9,7 @@ use clightningrpc_plugin::commands::RPCCommand;
 use clightningrpc_plugin::plugin::Plugin;
 use clightningrpc_plugin_macros::{notification, plugin};
 
-use opentelemetry_common::Opentelemetry;
+use opentelemetry_log::Opentelemetry;
 
 #[derive(Clone, Debug)]
 pub(crate) struct State {

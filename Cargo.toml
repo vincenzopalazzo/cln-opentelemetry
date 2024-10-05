@@ -1,6 +1,5 @@
 [workspace]
 members = [
-        "opentelemetry-common",
         "opentelemetry-plugin",
 ]
 resolver = "2"

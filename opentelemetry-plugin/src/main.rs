@@ -6,7 +6,10 @@ macro_rules! async_run {
         $rt.block_on($expr)
     }};
     ($expr:expr) => {{
-        let rt = tokio::runtime::Runtime::new().unwrap();
+        let rt = tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .unwrap();
         $crate::async_run!(rt, $expr)
     }};
 }

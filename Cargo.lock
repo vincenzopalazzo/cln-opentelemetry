@@ -724,9 +724,9 @@ dependencies = [
 
 [[package]]
 name = "opentelemetry-log"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39073ec50b7b8df5b1d65d8b0dfeb46421b164d1cd8c5bb1bf7daab601721f30"
+checksum = "e229ff2a60fcf8e8cfec1b2c20e597d5321e483658ce59e917d60c5dd7dbfc21"
 dependencies = [
  "anyhow",
  "log",

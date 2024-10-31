@@ -99,7 +99,12 @@ struct OnLogRequest {
 #[notification(on = "log")]
 fn on_log(plugin: &mut Plugin<State>, request: &Value) {
     let request = request.get("log").unwrap();
-    let request = json::from_value::<OnLogRequest>(request.clone()).expect("unable to parse json");
+    let request = json::from_value::<OnLogRequest>(request.clone());
+    if let Err(err) = request {
+        log::error!("{:?}", err);
+        return;
+    }
+    let request = request.expect("unable to parse json");
     let logstr = format!("{} {}", request.source, request.log);
     match request.level.as_str() {
         "debug" => log::debug!("{logstr}"),
@@ -107,7 +112,7 @@ fn on_log(plugin: &mut Plugin<State>, request: &Value) {
         "unusual" => log::warn!("{logstr}"),
         "broken" => log::error!("{logstr}"),
         _ => {
-            panic!("level not supported `{}`", request.level);
+            log::error!("**************** level not supported `{}`", request.level);
         }
     }
 }
